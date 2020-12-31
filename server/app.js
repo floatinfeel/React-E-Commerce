@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-// const router = require('./routes/index')
-const authRoute = require('./routes/authRoute')
+const router = require('./routes/index')
 const bodyParser = require('body-parser')
 
 const app = express()
@@ -23,11 +22,8 @@ app.use(morgan('dev'))
 app.use(cors())
 
 // routes
-app.use('/user/', authRoute)
+app.use(router)
 
-app.get('/', (req, res) => {
-  res.send('test route => home page')
-});
 
 // Page Not founded
 app.use((req, res) => {

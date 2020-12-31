@@ -1,24 +1,21 @@
-const express = require('express')
-const router = express.Router()
+const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const {check, validationResult} = require('express-validator')
 const gravatar = require('gravatar')
-//models
 const User = require('../models/User')
-//@route POST api/user/register
-//@desc Register user
-//@access Public
+const {check, validationResult} = require('express-validator')
 
-router.post('/register', [
-   //validation
-   check('name', 'Name is require').not().isEmpty(),
-   check('email', 'Please insert a valid email').isEmail(),
-   check('password', 'Please enter a password with 6 or more characters').isLength({
-       min: 6
-   }) 
+const signUp = async (req, res) =>{ 
 
-], async (req, res) =>{ 
+    [
+        //validation
+        check('name', 'Name is require').not().isEmpty(),
+        check('email', 'Please insert a valid email').isEmail(),
+        check('password', 'Please enter a password with 6 or more characters').isLength({
+            min: 6
+        }) 
+     
+     ]
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({
@@ -74,6 +71,6 @@ router.post('/register', [
         console.log(error);
         res.status(500).json('server error')
     }
- })
+ }
 
-module.exports = router
+ module.exports = {signUp}
