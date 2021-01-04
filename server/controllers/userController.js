@@ -5,17 +5,8 @@ const gravatar = require('gravatar')
 const User = require('../models/User')
 const {check, validationResult} = require('express-validator')
 
-const signUp = async (req, res) =>{ 
+const signUp =  async (req, res) =>{ 
 
-    [
-        //validation
-        check('name', 'Name is require').not().isEmpty(),
-        check('email', 'Please insert a valid email').isEmail(),
-        check('password', 'Please enter a password with 6 or more characters').isLength({
-            min: 6
-        }) 
-     
-     ]
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({
@@ -59,18 +50,65 @@ const signUp = async (req, res) =>{
         }
 
         jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            {  expiresIn: 36000,},
-            (err, token) =>{
-                if(err) throw err
-                res.json({token})
-            }
-        )
+                    payload, 
+                    process.env.JWT_SECRET,
+                    {expiresIn: 360000},
+                    (err, token) =>{
+                        if(err) throw err
+                        res.json({token})
+                    }
+                )
+
     } catch (error) {
         console.log(error);
-        res.status(500).json('server error')
+        res.status(500).json('internal server error')
     }
  }
 
- module.exports = {signUp}
+ const signIn = async (req, res) =>{
+    
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(400).json({
+            errors: errors.array()
+        })
+    }
+
+    const {email, password} = req.body
+
+    try {
+        let user = await User.findOne({email})
+
+        //if not found user
+        if(!user){
+            return res.status(400).json({
+                errors: [{msg: 'The email user does not exists!'}]
+            })
+        }
+
+        //compare password if email user founded.
+        const isMatch = await bcrypt.compare(password, user.password)
+        if(!isMatch){
+            return res.status(400).json({
+                errors: [{msg: 'Wrong password, try again!'}]
+            })
+        }
+
+        //payload jwt
+        const payload = {user: {id: user.id}}
+        jwt.sign(payload, process.env.JWT_SECRET,
+                    {expiresIn: 360000},
+                    (err, token) =>{
+                        if(err) throw err
+                        res.json({token})
+                    }
+                )
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('internal server error')
+    }
+
+ }
+
+ module.exports = {signUp, signIn}
