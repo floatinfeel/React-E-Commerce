@@ -1,12 +1,27 @@
 const express = require('express')
 const router = express.Router()
 const {check, validationResult} = require('express-validator')
+const authentication = require('../middlewares/authentication')
+const User = require('../models/User')
 //@route POST /user/register
 //@desc Register user
 //@access Public
 
 //controller
 const {signUp, signIn} = require('../controllers/userController')
+
+//after login
+router.get('/', authentication, async (req, res) => {
+    
+    try {
+        const user = await User.findById(req.user.id).select('-password')
+        res.json(user)    
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Internal server error')
+    }
+
+})
 
 //route register user
 router.post('/register', [
