@@ -7,10 +7,19 @@ import './assets/main.css'
 //redux
 import {Provider} from 'react-redux'
 import store from './store/store'
+//router
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+//components
+import Navbar from './components/navbar/navbar'
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+   <Router>
+    <Navbar />
+    <Switch>
+      <Route  exact path="/" component={App} />
+    </Switch>
+   </Router>
   </Provider>,
   document.getElementById('root')
 );
