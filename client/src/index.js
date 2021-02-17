@@ -11,13 +11,18 @@ import store from './store/store'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 //components
 import Navbar from './components/navbar/navbar'
+import Register from './pages/register'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.render(
   <Provider store={store}>
    <Router>
     <Navbar />
+    <ToastContainer/>
     <Switch>
       <Route  exact path="/" component={App} />
+      <Route  exact path="/register" component={Register} />
     </Switch>
    </Router>
   </Provider>,

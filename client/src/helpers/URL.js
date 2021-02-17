@@ -1,0 +1,1 @@
+export const urlDevelopment = 'http://localhost:3001'
